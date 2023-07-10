@@ -351,11 +351,11 @@ model = model.quantize(4).cuda()
 
 
 ## CPU 部署
-Baichuan-13B 支持 CPU 推理，但需要强调的是，CPU 的推理速度非常慢。需按如下方式修改模型加载的方式：
+Baichuan-13B 支持 CPU 推理，但需要强调的是，CPU 的推理速度相对较慢。需按如下方式修改模型加载的方式：
 ```python
 model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat", torch_dtype=torch.float32, trust_remote_code=True)
 ```
-整个模型加载大概需要 60GB 内存。
+使用CPU进行推理大概需要 60GB 内存。
 
 # 声明
 
