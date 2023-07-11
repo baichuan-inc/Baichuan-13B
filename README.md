@@ -321,15 +321,15 @@ Baichuan-13B 使用了 ALiBi 线性偏置技术，相对于 Rotary Embedding 计
 
 ## 量化部署
 
-Baichuan-13B 支持 int8 和 int4 量化。
+Baichuan-13B 支持 int8 和 int4 量化，用户只需在推理代码中简单修改两行即可实现。请注意，如果是为了节省显存而进行量化，应加载原始精度模型到 CPU 后再开始量化；避免在`from_pretrained`时添加`device_map='auto'`或者其它会导致把原始精度模型直接加载到 GPU 的行为的参数。
 
-如需使用 int8 量化，用户只需在推理代码中简单修改一行即可实现：
+如需使用 int8 量化：
 ```python
 model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat", torch_dtype=torch.float16, trust_remote_code=True)
 model = model.quantize(8).cuda() 
 ```
 
-如需使用 int4 量化，用户同样只需在推理代码中简单修改一行即可实现：
+同样的，如需使用 int4 量化：
 ```python
 model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat", torch_dtype=torch.float16, trust_remote_code=True)
 model = model.quantize(4).cuda()
