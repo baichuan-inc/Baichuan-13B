@@ -48,6 +48,7 @@ We conducted a `5-shot` evaluation on various authoritative Chinese and English 
 |-------------------------|:-----:|:---------------:|:----------:|:------:|:-------:|
 | Baichuan-7B             | 38.2  | 52.0            | 46.2       | 39.3   | 42.8    |
 | Chinese-Alpaca-Plus-13B | 35.2  | 45.6            | 40.0       | 38.2   | 38.8    |
+| Vicuna-13B              | 30.5  | 38.2            | 32.5       | 32.5   | 32.8    |
 | Chinese-LLaMA-Plus-13B  | 30.3  | 38.0            | 32.9       | 29.1   | 32.1    |
 | Ziya-LLaMA-13B-Pretrain | 27.6  | 34.4            | 32.0       | 28.6   | 30.0    |
 | LLaMA-13B               | 27.0  | 33.6            | 27.7       | 27.6   | 28.5    |
@@ -60,6 +61,7 @@ We conducted a `5-shot` evaluation on various authoritative Chinese and English 
 
 | Model 5-shot            | STEM  | Social Sciences | Humanities | Others | Average |
 |-------------------------|:-----:|:---------------:|:----------:|:------:|:-------:|
+| Vicuna-13B              | 40.4  | 60.5            | 49.5       | 58.4   | 52.0    |
 | LLaMA-13B               | 36.1  | 53.0            | 44.0       | 52.8   | 46.3    |
 | Chinese-Alpaca-Plus-13B | 36.9  | 48.9            | 40.5       | 50.5   | 43.9    |
 | Ziya-LLaMA-13B-Pretrain | 35.6  | 47.6            | 40.1       | 49.4   | 42.9    |
@@ -75,6 +77,7 @@ We conducted a `5-shot` evaluation on various authoritative Chinese and English 
 | Model 5-shot            | STEM  | Humanities | Social Sciences | Others | China Specific | Average |
 |-------------------------|:-----:|:----------:|:---------------:|:------:|:--------------:|:-------:|
 | Baichuan-7B             | 34.4  | 47.5       | 47.6            | 46.6   | 44.3           | 44.0    |
+| Vicuna-13B              | 31.8  | 36.2       | 37.6            | 39.5   | 34.3           | 36.3    |
 | Chinese-Alpaca-Plus-13B | 29.8  | 33.4       | 33.2            | 37.9   | 32.1           | 33.4    |
 | Chinese-LLaMA-Plus-13B  | 28.1  | 33.1       | 35.4            | 35.1   | 33.5           | 33.0    |
 | Ziya-LLaMA-13B-Pretrain | 29.0  | 30.7       | 33.8            | 34.4   | 31.9           | 32.1    |
