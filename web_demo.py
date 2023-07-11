@@ -51,7 +51,7 @@ def main():
     model, tokenizer = init_model()
     messages = init_chat_history()
 
-    if prompt := st.chat_input("你好，百川"):
+    if prompt := st.chat_input("Shift + Enter 换行, Enter 发送"):
         with st.chat_message("user", avatar='🧑‍💻'):
             st.markdown(prompt)
         messages.append({"role": "user", "content": prompt})
