@@ -305,15 +305,15 @@ Baichuan-13B uses ALiBi linear bias technology, which has a smaller computation 
 
 ## Quantization Deployment
 
-Baichuan-13B supports int8 and int4 quantization.
+Baichuan-13B supports int8 and int4 quantization, users only need to make a simple two-line change in the inference code to implement it. Please note, if quantization is done to save GPU memory, the original precision model should be loaded onto the CPU before starting quantization. Avoid adding parameters such as `device_map='auto'` or others that could cause the original precision model to be loaded directly onto the GPU when executing `from_pretrained`.
 
-To use int8 quantization, users simply modify one line in the inference code:
+To use int8 quantization:
 ```python
 model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat", torch_dtype=torch.float16, trust_remote_code=True)
 model = model.quantize(8).cuda() 
 ```
 
-Similarly, to use int4 quantization, users simply modify one line in the inference code:
+Similarly, to use int4 quantization:
 ```python
 model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat", torch_dtype=torch.float16, trust_remote_code=True)
 model = model.quantize(4).cuda()
