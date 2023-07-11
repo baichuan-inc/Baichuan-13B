@@ -52,7 +52,6 @@ We conducted a `5-shot` evaluation on various authoritative Chinese and English 
 | Ziya-LLaMA-13B-Pretrain | 27.6  | 34.4            | 32.0       | 28.6   | 30.0    |
 | LLaMA-13B               | 27.0  | 33.6            | 27.7       | 27.6   | 28.5    |
 | moss-moon-003-base (16B)| 27.0  | 29.1            | 27.2       | 26.9   | 27.4    |
-| vicuna-13B              | 22.8  | 24.8            | 22.3       | 18.5   | 22.2    |
 | **Baichuan-13B-Base**   | **45.9** | **63.5** | **57.2**    | **49.3** | **52.4** |
 | **Baichuan-13B-Chat**   | **43.7** | **64.6** | **56.2**    | **49.2** | **51.5** |
 
@@ -66,7 +65,6 @@ We conducted a `5-shot` evaluation on various authoritative Chinese and English 
 | Ziya-LLaMA-13B-Pretrain | 35.6  | 47.6            | 40.1       | 49.4   | 42.9    |
 | Baichuan-7B             | 35.6  | 48.9            | 38.4       | 48.1   | 42.3    |
 | Chinese-LLaMA-Plus-13B  | 33.1  | 42.8            | 37.0       | 44.6   | 39.2    |
-| vicuna-13B              | 24.2  | 24.1            | 24.6       | 26.8   | 24.9    |
 | moss-moon-003-base (16B)| 22.4  | 22.8            | 24.2       | 24.4   | 23.6    |
 | **Baichuan-13B-Base**   | **41.6** | **60.9** | **47.4**    | **58.5** | **51.6** |
 | **Baichuan-13B-Chat**   | **40.9** | **60.9** | **48.8**    | **59.0** | **52.1** |
@@ -82,7 +80,6 @@ We conducted a `5-shot` evaluation on various authoritative Chinese and English 
 | Ziya-LLaMA-13B-Pretrain | 29.0  | 30.7       | 33.8            | 34.4   | 31.9           | 32.1    |
 | LLaMA-13B               | 29.2  | 30.8       | 31.6            | 33.0   | 30.5           | 31.2    |
 | moss-moon-003-base (16B)| 27.2  | 30.4       | 28.8            | 32.6   | 28.7           | 29.6    |
-| vicuna-13B              | 24.0  | 25.4       | 25.3            | 25.0   | 25.0           | 24.9    |
 | **Baichuan-13B-Base**   | **41.7** | **61.1** | **59.8** | **59.0**          | **56.4** | **55.3** |
 | **Baichuan-13B-Chat**   | **42.8** | **62.6** | **59.7** | **59.0**          | **56.1** | **55.8** |
 > Note: CMMLU is a comprehensive benchmark specifically designed to assess the knowledge and reasoning capabilities of language models in a Chinese context. We adopted the offical [Evaluation Scheme](https://github.com/haonan-li/CMMLU).
