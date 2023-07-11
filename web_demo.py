@@ -1,7 +1,7 @@
 import json
 import torch
 import streamlit as st
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers.generation.utils import GenerationConfig
 
 
@@ -11,7 +11,7 @@ st.title("Baichuan-13B-Chat")
 
 @st.cache_resource
 def init_model():
-    model = AutoModel.from_pretrained(
+    model = AutoModelForCausalLM.from_pretrained(
         "baichuan-inc/Baichuan-13B-Chat",
         torch_dtype=torch.float16,
         device_map="auto",
