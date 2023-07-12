@@ -60,6 +60,8 @@ def main():
             placeholder = st.empty()
             for response in model.chat(tokenizer, messages, stream=True):
                 placeholder.markdown(response)
+                if torch.backends.mps.is_available():
+                    torch.mps.empty_cache()
         messages.append({"role": "assistant", "content": response})
         print(json.dumps(messages, ensure_ascii=False), flush=True)
 
