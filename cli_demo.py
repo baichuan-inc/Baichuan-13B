@@ -57,12 +57,16 @@ def main(stream=True):
                 for response in model.chat(tokenizer, messages, stream=True):
                     print(response[position:], end='', flush=True)
                     position = len(response)
+                    if torch.backends.mps.is_available():
+                        torch.mps.empty_cache()
             except KeyboardInterrupt:
                 pass
             print()
         else:
             response = model.chat(tokenizer, messages)
             print(response)
+            if torch.backends.mps.is_available():
+                torch.mps.empty_cache()
         messages.append({"role": "assistant", "content": response})
 
     print(Style.RESET_ALL)
