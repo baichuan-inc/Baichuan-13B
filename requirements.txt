@@ -1,6 +1,8 @@
 accelerate
 colorama
 cpm_kernels
+fastapi
 sentencepiece
 streamlit
 transformers_stream_generator
+unicorn
