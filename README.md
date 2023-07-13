@@ -334,6 +334,12 @@ model = model.quantize(8).cuda()
 model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat", torch_dtype=torch.float16, trust_remote_code=True)
 model = model.quantize(4).cuda()
 ```
+
+另外，如果你不想调用 quantize 在线量化，我们有量化好的 int8 Chat 模型可供使用：[Baichuan-13B-Chat-int8](https://huggingface.co/baichuan-inc/Baichuan-13B-Chat-int8)：
+```python
+model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat-int8", torch_dtype=torch.float16, trust_remote_code=True).cuda()
+```
+
 量化前后占用显存情况如下：
 | Precision   | GPU Mem (GB) |
 |-------------|:------------:|
