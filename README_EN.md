@@ -319,6 +319,11 @@ model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat", t
 model = model.quantize(4).cuda()
 ```
 
+Besides, if you don't want to do quantize on the fly, we have [Baichuan-13B-Chat-int8](https://huggingface.co/baichuan-inc/Baichuan-13B-Chat-int8) aviable for int8 quantization of the Chat version:
+```python
+model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat-int8", torch_dtype=torch.float16, trust_remote_code=True).cuda()
+```
+
 The GPU memory usage before and after quantization is as follows:
 | Precision   | GPU Mem (GB) |
 |-------------|:------------:|
