@@ -3,6 +3,7 @@ colorama
 cpm_kernels
 fastapi
 sentencepiece
+sse_starlette
 streamlit
 transformers_stream_generator
 unicorn

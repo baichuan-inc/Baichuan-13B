@@ -1,10 +1,11 @@
 import time
 import torch
 import uvicorn
-from pydantic import BaseModel, Field
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
+from pydantic import BaseModel, Field
+from sse_starlette.sse import EventSourceResponse
 from typing import List, Literal, Optional, Union
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers.generation.utils import GenerationConfig
@@ -59,7 +60,8 @@ class ChatCompletionResponseStreamChoice(BaseModel):
 class ChatCompletionResponse(BaseModel):
     model: str
     object: Literal["chat.completion", "chat.completion.chunk"]
-    choices: List[Union[ChatCompletionResponseChoice, ChatCompletionResponseStreamChoice]]
+    choices: List[Union[ChatCompletionResponseChoice,
+                        ChatCompletionResponseStreamChoice]]
     created: Optional[int] = Field(default_factory=lambda: int(time.time()))
 
 
@@ -93,6 +95,11 @@ async def list_models():
 async def create_chat_completion(request: ChatCompletionRequest):
     global model, tokenizer
     msgs = [_chat_message_to_baichuan_message(m) for m in request.messages]
+
+    if request.stream:
+        generate = _predict(model, tokenizer, msgs)
+        return EventSourceResponse(generate, media_type="text/event-stream")
+
     response = model.chat(tokenizer, msgs)
     choice_data = ChatCompletionResponseChoice(
         index=0,
@@ -103,9 +110,50 @@ async def create_chat_completion(request: ChatCompletionRequest):
     return ChatCompletionResponse(model=request.model, choices=[choice_data], object="chat.completion")
 
 
+def _predict(model, tokenizer, messages):
+    object_id = "chat.completion.chunk"
+
+    choice_data = ChatCompletionResponseStreamChoice(
+        index=0,
+        delta=DeltaMessage(role="assistant"),
+        finish_reason=None
+    )
+    chunk = ChatCompletionResponse(model=model_id, choices=[
+                                   choice_data], object=object_id)
+    yield "{}".format(chunk.json(exclude_unset=True, ensure_ascii=False))
+
+    current_length = 0
+    for new_response in model.chat(tokenizer, messages, stream=True):
+        if len(new_response) == current_length:
+            continue
+
+        new_text = new_response[current_length:]
+        current_length = len(new_response)
+
+        choice_data = ChatCompletionResponseStreamChoice(
+            index=0,
+            delta=DeltaMessage(content=new_text),
+            finish_reason=None
+        )
+        chunk = ChatCompletionResponse(model=model_id, choices=[
+                                       choice_data], object=object_id)
+        yield "{}".format(chunk.json(exclude_unset=True, ensure_ascii=False))
+
+    choice_data = ChatCompletionResponseStreamChoice(
+        index=0,
+        delta=DeltaMessage(),
+        finish_reason="stop"
+    )
+    chunk = ChatCompletionResponse(model=model_id, choices=[
+                                   choice_data], object=object_id)
+    yield "{}".format(chunk.json(exclude_unset=True, ensure_ascii=False))
+    yield '[DONE]'
+
+
 def _chat_message_to_baichuan_message(message: ChatMessage):
     return {
-        "role": message.role if message.role == "assistant" else "user",  # "system" role is not supported by Baichuan
+        # "system" role is not supported by Baichuan
+        "role": message.role if message.role == "assistant" else "user",
         "content": message.content
     }
 
@@ -116,6 +164,7 @@ if __name__ == "__main__":
     model = AutoModelForCausalLM.from_pretrained(
         model_id, torch_dtype=torch.float16, device_map="auto", trust_remote_code=True)
     model.generation_config = GenerationConfig.from_pretrained(model_id)
-    tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=False, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(
+        model_id, use_fast=False, trust_remote_code=True)
 
     uvicorn.run(app, host='0.0.0.0', port=8000, workers=1)
