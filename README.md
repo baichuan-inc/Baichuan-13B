@@ -376,7 +376,7 @@ model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat", t
 # 对模型进行微调
 开发者可以对 Baichuan-13B-Base 或 Baichuan-13B-Chat 进行微调使用。在此我们测试了与 Baichuan-13B 兼容的微调工具 [LLaMA Efficient Tuning](https://github.com/hiyouga/LLaMA-Efficient-Tuning)，并给出`全量微调`和 `LoRA微调`的两种示范。
 
-在开始之前，用户需下载 LLaMA Efficient Tuning 项目并按其要求[安装依赖](https://github.com/hiyouga/LLaMA-Efficient-Tuning#getting-started)。
+在开始之前，开发者需下载 LLaMA Efficient Tuning 项目并按其要求[安装依赖](https://github.com/hiyouga/LLaMA-Efficient-Tuning#getting-started)。
 
 输入数据为放置在项目`data`目录下的 json 文件，用`--dataset`选项指定（参考下面示例），多个输入文件用`,`分隔。json 文件示例格式和字段说明如下：
 ```
