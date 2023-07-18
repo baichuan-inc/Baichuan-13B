@@ -28,6 +28,15 @@
 </h4>
 </div>
 
+# Table of Contents
+
+- [Introduction](#Introduction)
+- [Benchmark Results](#Benchmark-Results)
+- [Model Details](#Model-Details)
+- [Inference and Deployment](#Inference-and-Deployment)
+- [Fintuning](#Fintuning)
+- [Delcaration](#Delcaration)
+- [Licenses](#Licenses)
 
 # Introduction
 
@@ -345,6 +354,8 @@ Baichuan-13B supports CPU inference, but it should be emphasized that the infere
 model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat", torch_dtype=torch.float32, trust_remote_code=True)
 ```
 Loading the entire model approximately requires 60GB of memory.
+
+# Fintuning
 
 # Delcaration
 
