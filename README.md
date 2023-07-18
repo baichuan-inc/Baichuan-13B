@@ -363,6 +363,120 @@ model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat", t
 ```
 使用CPU进行推理大概需要 60GB 内存。
 
+# 对模型进行微调
+开发者可以对 Baichuan-13B-Base 或 Baichuan-13B-Chat 进行微调使用。在此我们测试了与 Baichuan-13B 兼容的微调工具 [LLaMA Efficient Tuning](https://github.com/hiyouga/LLaMA-Efficient-Tuning)，并给出`全量微调`和 `LoRA微调`的两种示范。
+
+在开始之前，用户需下载 LLaMA Efficient Tuning 项目并按其要求[安装依赖](https://github.com/hiyouga/LLaMA-Efficient-Tuning#getting-started)。
+
+输入数据为放置在项目`data`目录下的 json 文件，用`--dataset`选项指定（参考下面示例），多个输入文件用`,`分隔。json 文件示例格式和字段说明如下：
+```
+[
+    {
+        "instruction": "What are the three primary colors?",
+        "input": "",
+        "output": "The three primary colors are red, blue, and yellow."
+    },
+    ....
+]
+```
+json 文件中存储一个列表，列表的每个元素是一个 sample。其中`instruction`代表用户输入，`input`是可选项，如果开发者同时指定了`instruction`和`input`，会把二者用`\n`连接起来代表用户输入；`output`代表期望的模型输出。
+
+下面我们给出两种微调场景下测试跑通的示范脚本。
+
+## 全量微调
+我们在 8 * Nvidia A100 80 GB + deepspeed 的环境下进行了全量微调测试。
+
+训练启动脚本示例：
+```shell
+deepspeed --num_gpus=8 src/train_bash.py \
+    --stage sft \
+    --model_name_or_path baichuan-inc/Baichuan-13B-Base \
+    --do_train \
+    --dataset alpaca_gpt4_en,alpaca_gpt4_zh \
+    --finetuning_type full \
+    --output_dir path_to_your_sft_checkpoint \
+    --overwrite_cache \
+    --per_device_train_batch_size 4 \ 
+    --per_device_eval_batch_size 4 \ 
+    --gradient_accumulation_steps 8 \ 
+    --preprocessing_num_workers 16 \
+    --lr_scheduler_type cosine \
+    --logging_steps 10 \
+    --save_steps 100 \
+    --eval_steps 100 \
+    --learning_rate 5e-5 \
+    --max_grad_norm 0.5 \
+    --num_train_epochs 2.0 \
+    --dev_ratio 0.01 \
+    --evaluation_strategy steps \
+    --load_best_model_at_end \
+    --plot_loss \
+    --fp16 \
+    --deepspeed deepspeed.json
+```
+
+deep_speed.json 配置示例：
+```json
+{
+  "train_micro_batch_size_per_gpu": "auto",
+  "zero_allow_untested_optimizer": true,
+  "fp16": {
+    "enabled": "auto",
+    "loss_scale": 0,
+    "initial_scale_power": 16, 
+    "loss_scale_window": 1000,
+    "hysteresis": 2,
+    "min_loss_scale": 1
+  },  
+  "zero_optimization": {
+    "stage": 2,
+    "allgather_partitions": true,
+    "allgather_bucket_size": 5e8,
+    "overlap_comm": false,
+    "reduce_scatter": true,
+    "reduce_bucket_size": 5e8,
+    "contiguous_gradients" : true
+  }
+}
+```
+
+## LoRA微调
+我们在单张 Nvidia A100 80G 显卡上进行了 LoRA 微调测试。
+
+训练启动脚本示例：
+
+```shell
+CUDA_VISIBLE_DEVICES=0 python src/train_bash.py \
+    --stage sft \
+    --model_name_or_path baichuan-inc/Baichuan-13B-Base \
+    --do_train \
+    --dataset alpaca_gpt4_en,alpaca_gpt4_zh \
+    --finetuning_type lora \
+    --lora_rank 8 \ 
+    --lora_target W_pack \
+    --output_dir path_to_your_sft_checkpoint \
+    --overwrite_cache \
+    --per_device_train_batch_size 4 \ 
+    --per_device_eval_batch_size 4 \ 
+    --gradient_accumulation_steps 8 \ 
+    --preprocessing_num_workers 16 \
+    --lr_scheduler_type cosine \
+    --logging_steps 10 \
+    --save_steps 100 \
+    --eval_steps 100 \
+    --learning_rate 5e-5 \
+    --max_grad_norm 0.5 \
+    --num_train_epochs 2.0 \
+    --dev_ratio 0.01 \
+    --evaluation_strategy steps \
+    --load_best_model_at_end \
+    --plot_loss \
+    --fp16
+```
+
+关于使用 LLaMA Efficient Tuning 的更详细的用法，请参阅其项目主页说明。
+
+
 # 声明
 
 我们在此声明，我们的开发团队并未基于 Baichuan-13B 模型开发任何应用，无论是在 iOS、Android、网页或任何其他平台。我们强烈呼吁所有使用者，不要利用 Baichuan-13B 模型进行任何危害国家社会安全或违法的活动。另外，我们也要求使用者不要将 Baichuan-13B 模型用于未经适当安全审查和备案的互联网服务。我们希望所有的使用者都能遵守这个原则，确保科技的发展能在规范和合法的环境下进行。
