@@ -34,7 +34,7 @@
 - [Benchmark Results](#Benchmark-Results)
 - [Model Details](#Model-Details)
 - [Inference and Deployment](#Inference-and-Deployment)
-- [Fintuning](#Fintuning)
+- [Fine-tuning](#Fine-tuning)
 - [Delcaration](#Delcaration)
 - [Licenses](#Licenses)
 
@@ -355,7 +355,118 @@ model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat", t
 ```
 Loading the entire model approximately requires 60GB of memory.
 
-# Fintuning
+# Fine-tuning
+
+Developers can fine-tune both Baichuan-13B-Base and Baichuan-13B-Chat for use. Here we have tested the fine-tuning tool [LLaMA Efficient Tuning](https://github.com/hiyouga/LLaMA-Efficient-Tuning) which is compatible with our model, providing demonstrations for both `Full Params Fine-Tuning` and `LoRA Fine-Tuning`.
+
+Before we start, developers should download the project LLaMA Efficient Tuning and [install it's requirements](https://github.com/hiyouga/LLaMA-Efficient-Tuning#getting-started).
+
+The input data are in json files under `data` directory. Use option `--dataset` to specify. For multiple input files, seperate using `,`. The example format and field descriptions of a .json file are as follows:：
+```
+[
+    {
+        "instruction": "What are the three primary colors?",
+        "input": "",
+        "output": "The three primary colors are red, blue, and yellow."
+    },
+    ....
+]
+```
+The .json file stores a list, each element of which is a sample. `instruction` represents the user's prompt, `input` is optional. If the developer specifies both `instruction` and `input`, they will be connected with `\n` to represent the user's prompt; `output` represents the expected model output.
+
+Below, we provide demonstration scripts that have been successfully tested in two fine-tuning scenarios.
+
+## Full Params Fine-tuning
+We tested under 8 * Nvidia A100 80 GB + deepspeed for full params fine-tuning.
+
+Example of script to start fine-tuning:
+```shell
+deepspeed --num_gpus=8 src/train_bash.py \
+    --stage sft \
+    --model_name_or_path baichuan-inc/Baichuan-13B-Base \
+    --do_train \
+    --dataset alpaca_gpt4_en,alpaca_gpt4_zh \
+    --finetuning_type full \
+    --output_dir path_to_your_sft_checkpoint \
+    --overwrite_cache \
+    --per_device_train_batch_size 4 \ 
+    --per_device_eval_batch_size 4 \ 
+    --gradient_accumulation_steps 8 \ 
+    --preprocessing_num_workers 16 \
+    --lr_scheduler_type cosine \
+    --logging_steps 10 \
+    --save_steps 100 \
+    --eval_steps 100 \
+    --learning_rate 5e-5 \
+    --max_grad_norm 0.5 \
+    --num_train_epochs 2.0 \
+    --dev_ratio 0.01 \
+    --evaluation_strategy steps \
+    --load_best_model_at_end \
+    --plot_loss \
+    --fp16 \
+    --deepspeed deepspeed.json
+```
+
+Example of deep_speed.json:
+```json
+{
+  "train_micro_batch_size_per_gpu": "auto",
+  "zero_allow_untested_optimizer": true,
+  "fp16": {
+    "enabled": "auto",
+    "loss_scale": 0,
+    "initial_scale_power": 16, 
+    "loss_scale_window": 1000,
+    "hysteresis": 2,
+    "min_loss_scale": 1
+  },  
+  "zero_optimization": {
+    "stage": 2,
+    "allgather_partitions": true,
+    "allgather_bucket_size": 5e8,
+    "overlap_comm": false,
+    "reduce_scatter": true,
+    "reduce_bucket_size": 5e8,
+    "contiguous_gradients" : true
+  }
+}
+```
+
+## LoRA Fine-tuning
+We tested LoRA fine-tuning on a single Nvidia A100 80G GPU.
+
+Example of script to start fine-tuning:
+```shell
+CUDA_VISIBLE_DEVICES=0 python src/train_bash.py \
+    --stage sft \
+    --model_name_or_path baichuan-inc/Baichuan-13B-Base \
+    --do_train \
+    --dataset alpaca_gpt4_en,alpaca_gpt4_zh \
+    --finetuning_type lora \
+    --lora_rank 8 \ 
+    --lora_target W_pack \
+    --output_dir path_to_your_sft_checkpoint \
+    --overwrite_cache \
+    --per_device_train_batch_size 4 \ 
+    --per_device_eval_batch_size 4 \ 
+    --gradient_accumulation_steps 8 \ 
+    --preprocessing_num_workers 16 \
+    --lr_scheduler_type cosine \
+    --logging_steps 10 \
+    --save_steps 100 \
+    --eval_steps 100 \
+    --learning_rate 5e-5 \
+    --max_grad_norm 0.5 \
+    --num_train_epochs 2.0 \
+    --dev_ratio 0.01 \
+    --evaluation_strategy steps \
+    --load_best_model_at_end \
+    --plot_loss \
+    --fp16
+```
+
+For more detailed usage of LLaMA Efficient Tuning, please refer to the instructions on its project homepage.
 
 # Delcaration
 
