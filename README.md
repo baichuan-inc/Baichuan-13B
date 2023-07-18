@@ -28,7 +28,16 @@
 </h4>
 </div>
 
+# 目录
 
+- [介绍](#介绍)
+- [Benchmark结果](#Benchmark结果)
+- [推理和部署](#推理和部署)
+- [对模型进行微调](#对模型进行微调)
+- [声明](#声明)
+- [协议](#协议)
+
+  
 # 介绍
 Baichuan-13B 是由百川智能继 [Baichuan-7B](https://github.com/baichuan-inc/baichuan-7B) 之后开发的包含 130 亿参数的开源可商用的大规模语言模型，在权威的中文和英文 benchmark 上均取得同尺寸最好的效果。本次发布包含有预训练 ([Baichuan-13B-Base](https://huggingface.co/baichuan-inc/Baichuan-13B-Base)) 和对齐 ([Baichuan-13B-Chat](https://huggingface.co/baichuan-inc/Baichuan-13B-Chat)) 两个版本。Baichuan-13B 有如下几个特点：
 
