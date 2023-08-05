@@ -28,6 +28,9 @@
 </h4>
 </div>
 
+# 更新信息
+[2023.08.01] 更新了对齐模型 [Baichuan-13B-Chat](https://huggingface.co/baichuan-inc/Baichuan-13B-Chat) 权重，优化了部分场景的效果
+
 # 目录
 
 - [介绍](#介绍)
