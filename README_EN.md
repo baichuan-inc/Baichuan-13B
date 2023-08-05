@@ -28,6 +28,9 @@
 </h4>
 </div>
 
+# Update
+[2023.08.01] Updated weights of the aligned model [Baichuan-13B-Chat](https://huggingface.co/baichuan-inc/Baichuan-13B-Chat), optimizing the effects in some scenarios.
+
 # Table of Contents
 
 - [Introduction](#Introduction)
