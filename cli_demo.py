@@ -1,7 +1,9 @@
 import os
 import torch
 import platform
+import subprocess
 from colorama import Fore, Style
+from tempfile import NamedTemporaryFile
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers.generation.utils import GenerationConfig
 
@@ -30,13 +32,20 @@ def clear_screen():
         os.system("cls")
     else:
         os.system("clear")
-    print(Fore.YELLOW + Style.BRIGHT + "欢迎使用百川大模型，输入进行对话，clear 清空历史，CTRL+C 中断生成，stream 开关流式生成，exit 结束。")
+    print(Fore.YELLOW + Style.BRIGHT + "欢迎使用百川大模型，输入进行对话，vim 多行输入，clear 清空历史，CTRL+C 中断生成，stream 开关流式生成，exit 结束。")
     return []
+
+
+def vim_input():
+    with NamedTemporaryFile() as tempfile:
+        tempfile.close()
+        subprocess.call(['vim', '+star', tempfile.name])
+        text = open(tempfile.name).read()
+    return text
 
 
 def main(stream=True):
     model, tokenizer = init_model()
-
     messages = clear_screen()
     while True:
         prompt = input(Fore.GREEN + Style.BRIGHT + "\n用户：" + Style.NORMAL)
@@ -45,6 +54,9 @@ def main(stream=True):
         if prompt.strip() == "clear":
             messages = clear_screen()
             continue
+        if prompt.strip() == 'vim':
+            prompt = vim_input()
+            print(prompt)
         print(Fore.CYAN + Style.BRIGHT + "\nBaichuan：" + Style.NORMAL, end='')
         if prompt.strip() == "stream":
             stream = not stream
@@ -68,7 +80,6 @@ def main(stream=True):
             if torch.backends.mps.is_available():
                 torch.mps.empty_cache()
         messages.append({"role": "assistant", "content": response})
-
     print(Style.RESET_ALL)
 
 
