@@ -380,7 +380,7 @@ The .json file stores a list, each element of which is a sample. `instruction` r
 Below, we provide demonstration scripts that have been successfully tested in two fine-tuning scenarios.
 
 ## Full Params Fine-tuning
-We tested under 8 * Nvidia A100 80 GB + deepspeed for full params fine-tuning.
+We tested under 8 * Nvidia A100 80 GB + DeepSpeed for full params fine-tuning.
 
 Example of script to start fine-tuning:
 ```shell
@@ -389,6 +389,7 @@ deepspeed --num_gpus=8 src/train_bash.py \
     --model_name_or_path baichuan-inc/Baichuan-13B-Base \
     --do_train \
     --dataset alpaca_gpt4_en,alpaca_gpt4_zh \
+    --template default \
     --finetuning_type full \
     --output_dir path_to_your_sft_checkpoint \
     --overwrite_cache \
@@ -403,7 +404,7 @@ deepspeed --num_gpus=8 src/train_bash.py \
     --learning_rate 5e-5 \
     --max_grad_norm 0.5 \
     --num_train_epochs 2.0 \
-    --dev_ratio 0.01 \
+    --val_size 0.01 \
     --evaluation_strategy steps \
     --load_best_model_at_end \
     --plot_loss \
@@ -411,10 +412,12 @@ deepspeed --num_gpus=8 src/train_bash.py \
     --deepspeed deepspeed.json
 ```
 
-Example of deep_speed.json:
+Example of `deepspeed.json`:
 ```json
 {
   "train_micro_batch_size_per_gpu": "auto",
+  "gradient_accumulation_steps": "auto",
+  "gradient_clipping": "auto",
   "zero_allow_untested_optimizer": true,
   "fp16": {
     "enabled": "auto",
@@ -431,7 +434,7 @@ Example of deep_speed.json:
     "overlap_comm": false,
     "reduce_scatter": true,
     "reduce_bucket_size": 5e8,
-    "contiguous_gradients" : true
+    "contiguous_gradients": true
   }
 }
 ```
@@ -446,6 +449,7 @@ CUDA_VISIBLE_DEVICES=0 python src/train_bash.py \
     --model_name_or_path baichuan-inc/Baichuan-13B-Base \
     --do_train \
     --dataset alpaca_gpt4_en,alpaca_gpt4_zh \
+    --template default \
     --finetuning_type lora \
     --lora_rank 8 \ 
     --lora_target W_pack \
@@ -462,7 +466,7 @@ CUDA_VISIBLE_DEVICES=0 python src/train_bash.py \
     --learning_rate 5e-5 \
     --max_grad_norm 0.5 \
     --num_train_epochs 2.0 \
-    --dev_ratio 0.01 \
+    --val_size 0.01 \
     --evaluation_strategy steps \
     --load_best_model_at_end \
     --plot_loss \
