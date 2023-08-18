@@ -387,7 +387,7 @@ model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat", t
 
 在开始之前，开发者需下载 LLaMA Efficient Tuning 项目并按其要求[安装依赖](https://github.com/hiyouga/LLaMA-Efficient-Tuning/blob/main/README_zh.md#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8)。
 
-输入数据为放置在项目 `data` 目录下的 json 文件，并且按照 [README](https://github.com/hiyouga/LLaMA-Efficient-Tuning/blob/main/data/README_zh.md) 的示例修改 `dataset_info.json`，在训练时用 `--dataset` 选项指定（参考下面示例），多个输入文件用 `,` 分隔。json 文件示例格式和字段说明如下：
+输入数据为放置在项目 `data` 目录下的 json 文件，在训练时用 `--dataset` 选项指定（参考下面示例），多个输入文件用 `,` 分隔。json 文件示例格式和字段说明如下：
 ```
 [
     {
