@@ -383,11 +383,11 @@ model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat", t
 使用CPU进行推理大概需要 60GB 内存。
 
 # 对模型进行微调
-开发者可以对 Baichuan-13B-Base 或 Baichuan-13B-Chat 进行微调使用。在此我们测试了与 Baichuan-13B 兼容的微调工具 [LLaMA Efficient Tuning](https://github.com/hiyouga/LLaMA-Efficient-Tuning)，并给出`全量微调`和 `LoRA微调`的两种示范。
+开发者可以对 Baichuan-13B-Base 或 Baichuan-13B-Chat 进行微调使用。在此我们测试了与 Baichuan-13B 兼容的微调工具 [LLaMA Efficient Tuning](https://github.com/hiyouga/LLaMA-Efficient-Tuning)，并给出`全量微调`和 `LoRA 微调`的两种示范。
 
-在开始之前，开发者需下载 LLaMA Efficient Tuning 项目并按其要求[安装依赖](https://github.com/hiyouga/LLaMA-Efficient-Tuning#getting-started)。
+在开始之前，开发者需下载 LLaMA Efficient Tuning 项目并按其要求[安装依赖](https://github.com/hiyouga/LLaMA-Efficient-Tuning/blob/main/README_zh.md#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8)。
 
-输入数据为放置在项目`data`目录下的 json 文件，用`--dataset`选项指定（参考下面示例），多个输入文件用`,`分隔。json 文件示例格式和字段说明如下：
+输入数据为放置在项目 `data` 目录下的 json 文件，并且按照 [README](https://github.com/hiyouga/LLaMA-Efficient-Tuning/blob/main/data/README_zh.md) 的示例修改 `dataset_info.json`，在训练时用 `--dataset` 选项指定（参考下面示例），多个输入文件用 `,` 分隔。json 文件示例格式和字段说明如下：
 ```
 [
     {
@@ -398,12 +398,12 @@ model = AutoModelForCausalLM.from_pretrained("baichuan-inc/Baichuan-13B-Chat", t
     ....
 ]
 ```
-json 文件中存储一个列表，列表的每个元素是一个 sample。其中`instruction`代表用户输入，`input`是可选项，如果开发者同时指定了`instruction`和`input`，会把二者用`\n`连接起来代表用户输入；`output`代表期望的模型输出。
+json 文件中存储一个列表，列表的每个元素是一个 sample。其中 `instruction` 代表用户输入，`input` 是可选项，如果开发者同时指定了 `instruction` 和 `input`，会把二者用 `\n` 连接起来代表用户输入；`output` 代表期望的模型输出。
 
 下面我们给出两种微调场景下测试跑通的示范脚本。
 
 ## 全量微调
-我们在 8 * Nvidia A100 80 GB + deepspeed 的环境下进行了全量微调测试。
+我们在 8 * Nvidia A100 80 GB + DeepSpeed 的环境下进行了全量微调测试。
 
 训练启动脚本示例：
 ```shell
@@ -412,6 +412,7 @@ deepspeed --num_gpus=8 src/train_bash.py \
     --model_name_or_path baichuan-inc/Baichuan-13B-Base \
     --do_train \
     --dataset alpaca_gpt4_en,alpaca_gpt4_zh \
+    --template default \
     --finetuning_type full \
     --output_dir path_to_your_sft_checkpoint \
     --overwrite_cache \
@@ -426,7 +427,7 @@ deepspeed --num_gpus=8 src/train_bash.py \
     --learning_rate 5e-5 \
     --max_grad_norm 0.5 \
     --num_train_epochs 2.0 \
-    --dev_ratio 0.01 \
+    --val_size 0.01 \
     --evaluation_strategy steps \
     --load_best_model_at_end \
     --plot_loss \
@@ -434,10 +435,12 @@ deepspeed --num_gpus=8 src/train_bash.py \
     --deepspeed deepspeed.json
 ```
 
-deep_speed.json 配置示例：
+`deepspeed.json` 配置示例：
 ```json
 {
   "train_micro_batch_size_per_gpu": "auto",
+  "gradient_accumulation_steps": "auto",
+  "gradient_clipping": "auto",
   "zero_allow_untested_optimizer": true,
   "fp16": {
     "enabled": "auto",
@@ -454,7 +457,7 @@ deep_speed.json 配置示例：
     "overlap_comm": false,
     "reduce_scatter": true,
     "reduce_bucket_size": 5e8,
-    "contiguous_gradients" : true
+    "contiguous_gradients": true
   }
 }
 ```
@@ -470,6 +473,7 @@ CUDA_VISIBLE_DEVICES=0 python src/train_bash.py \
     --model_name_or_path baichuan-inc/Baichuan-13B-Base \
     --do_train \
     --dataset alpaca_gpt4_en,alpaca_gpt4_zh \
+    --template default \
     --finetuning_type lora \
     --lora_rank 8 \ 
     --lora_target W_pack \
@@ -486,7 +490,7 @@ CUDA_VISIBLE_DEVICES=0 python src/train_bash.py \
     --learning_rate 5e-5 \
     --max_grad_norm 0.5 \
     --num_train_epochs 2.0 \
-    --dev_ratio 0.01 \
+    --val_size 0.01 \
     --evaluation_strategy steps \
     --load_best_model_at_end \
     --plot_loss \
