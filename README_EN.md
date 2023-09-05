@@ -38,7 +38,7 @@
 - [Model Details](#Model-Details)
 - [Inference and Deployment](#Inference-and-Deployment)
 - [Fine-tuning](#Fine-tuning)
-- [Delcaration](#Delcaration)
+- [Disclaimer](#Disclaimer)
 - [Licenses](#Licenses)
 
 # Introduction
@@ -471,7 +471,7 @@ CUDA_VISIBLE_DEVICES=0 python src/train_bash.py \
 
 For more detailed usage of LLaMA Efficient Tuning, please refer to the instructions on its project homepage.
 
-# Delcaration
+# Disclaimer
 
 We hereby declare that our team has not developed any applications based on Baichuan-13B model, not on iOS, Android, the web, or any other platform. We strongly call on all users not to use Baichuan-13B model for any activities that harm national / social security or violate the law. Also, we ask users not to use Baichuan-13B model for Internet services that have not undergone appropriate security reviews and filings. We hope that all users can abide by this principle and ensure that the development of technology proceeds in a regulated and legal environment.
 
