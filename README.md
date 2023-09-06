@@ -20,6 +20,7 @@
 <div align="center">
 
 [![license](https://img.shields.io/github/license/modelscope/modelscope.svg)](https://github.com/Baichuan-inc/baichuan-13B/blob/main/LICENSE)
+[![evaluation](https://img.shields.io/badge/OpenCompass-Support-royalblue.svg)](https://github.com/internLM/OpenCompass/)
 <h4 align="center">
     <p>
         <b>中文</b> |
