@@ -29,7 +29,7 @@
 </div>
 
 # 更新信息
-- [2023.09.06] 我们发布了新一代开源模型 [Baichuan-2](https://github.com/baichuan-inc/Baichuan2)，包含 7B、13B 尺寸 🔥🔥🔥
+- [2023.09.06] 我们发布了新一代开源模型 [Baichuan 2](https://github.com/baichuan-inc/Baichuan2)，包含 7B、13B 尺寸 🔥🔥🔥
 - [2023.08.01] 更新了对齐模型 [Baichuan-13B-Chat](https://huggingface.co/baichuan-inc/Baichuan-13B-Chat) 权重，优化了部分场景的效果
 
 # 目录
